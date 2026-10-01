@@ -23,21 +23,25 @@
   const burger = $('#hamburger'), mmenu = $('#mobileMenu');
   if(burger && mmenu) burger.addEventListener('click', ()=> mmenu.classList.toggle('open'));
 
-  // starfield canvas
+  // starfield canvas (skipped for reduced motion, lighter on small screens, paused in background tabs)
   const canvas = $('#stars');
-  if(canvas){
+  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(canvas && !reduceMotion){
     const ctx = canvas.getContext('2d');
-    let W,H,stars=[];
+    let W,H,stars=[],running=true;
     const resize=()=>{
       W=canvas.width=innerWidth; H=canvas.height=innerHeight;
-      stars = Array.from({length: Math.min(160, Math.floor(W/9))}, ()=>({
+      const count = W<700 ? 55 : Math.min(110, Math.floor(W/12));
+      stars = Array.from({length: count}, ()=>({
         x:Math.random()*W, y:Math.random()*H,
         r:Math.random()*1.6+.3, s:Math.random()*.35+.05,
         tw:Math.random()*Math.PI*2, c: Math.random()>.82 ? '255,46,166' : Math.random()>.6 ? '139,92,246' : '255,255,255'
       }));
     };
     resize(); addEventListener('resize', resize);
+    document.addEventListener('visibilitychange', ()=>{ running = !document.hidden; if(running) requestAnimationFrame(loop); });
     (function loop(){
+      if(!running) return;
       ctx.clearRect(0,0,W,H);
       const t = Date.now()/1000;
       for(const st of stars){
@@ -48,13 +52,17 @@
       }
       requestAnimationFrame(loop);
     })();
+  } else if(canvas){
+    canvas.style.display = 'none';
   }
 
-  // cursor glow
+  // cursor glow (rAF-throttled transform, no layout thrash)
   const glow = $('#cursorGlow');
-  if(glow && matchMedia('(pointer:fine)').matches){
+  if(glow && matchMedia('(pointer:fine)').matches && !reduceMotion){
+    let gx=innerWidth/2, gy=innerHeight*0.2, tx=gx, ty=gy, queued=false;
     addEventListener('mousemove', e=>{
-      glow.style.left=e.clientX+'px'; glow.style.top=e.clientY+'px';
+      tx=e.clientX; ty=e.clientY;
+      if(!queued){ queued=true; requestAnimationFrame(()=>{ gx=tx; gy=ty; glow.style.transform=`translate(${gx-260}px,${gy-260}px)`; queued=false; }); }
     }, {passive:true});
   }
 
@@ -111,17 +119,34 @@
     restart();
   }
 
-  // tilt on cards (desktop)
-  if(matchMedia('(pointer:fine)').matches){
+  // tilt on cards (desktop, rAF-throttled)
+  if(matchMedia('(pointer:fine)').matches && !reduceMotion){
     $$('[data-tilt]').forEach(card=>{
+      let queued=false;
       card.addEventListener('mousemove', e=>{
-        const r=card.getBoundingClientRect();
-        const rx=((e.clientY-r.top)/r.height-.5)*-7;
-        const ry=((e.clientX-r.left)/r.width-.5)*7;
-        card.style.transform=`perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg) translateY(-6px)`;
+        if(queued) return; queued=true;
+        requestAnimationFrame(()=>{
+          const r=card.getBoundingClientRect();
+          const rx=((e.clientY-r.top)/r.height-.5)*-7;
+          const ry=((e.clientX-r.left)/r.width-.5)*7;
+          card.style.transform=`perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg) translateY(-6px)`;
+          queued=false;
+        });
       });
       card.addEventListener('mouseleave', ()=>{card.style.transform='';});
     });
+  }
+
+  // pause offscreen videos so decoding never fights scrolling
+  if('IntersectionObserver' in window){
+    const vio = new IntersectionObserver(entries=>{
+      entries.forEach(en=>{
+        const v=en.target;
+        if(en.isIntersecting){ if(v.paused) v.play().catch(()=>{}); }
+        else if(!v.paused){ v.pause(); }
+      });
+    },{threshold:.15});
+    $$('video[autoplay]').forEach(v=>vio.observe(v));
   }
 
   // smooth anchor offset for fixed header
