@@ -326,6 +326,23 @@ footer{border-top:1px solid var(--stroke);padding:56px 0 120px;background:rgba(0
 .call-modal-number{display:block;font-family:var(--font-display);font-weight:800;font-size:30px;letter-spacing:-.01em;padding:15px;border-radius:16px;background:linear-gradient(135deg,#7c3aed,#ff2ea6);box-shadow:var(--glow-pink);margin-bottom:12px}
 .call-modal-later{display:block;margin-top:12px;background:none;border:0;color:var(--muted);font-size:13.5px;cursor:pointer;text-decoration:underline}
 
+/* free tools */
+.tool-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:26px}
+.tool-card{padding:28px}
+.tool-card h3{font-size:22px;margin:14px 0 8px}
+.tool-card>p{color:var(--muted);font-size:14.5px;margin:0 0 16px}
+.quiz-opt{display:block;width:100%;text-align:left;margin:8px 0;padding:14px 16px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid var(--stroke-2);color:#fff;font-size:15px;cursor:pointer;font-family:var(--font-body)}
+.quiz-opt:hover{background:rgba(139,92,246,.18);border-color:rgba(139,92,246,.5)}
+.quiz-result{background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.35);border-radius:14px;padding:18px;margin-top:6px}
+.speed-track{height:12px;border-radius:999px;background:rgba(255,255,255,.1);overflow:hidden;margin:14px 0}
+.speed-fill{height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,var(--violet),var(--pink),var(--cyan));transition:width .2s}
+.speed-result{font-family:var(--font-display);font-size:clamp(34px,5vw,44px);font-weight:800}
+input[type=range].calc-range{width:100%;accent-color:#ff2ea6}
+.calc-label{display:flex;justify-content:space-between;font-size:14px;color:var(--muted);margin:16px 0 6px}
+.calc-label b{color:#fff}
+.calc-num{font-family:var(--font-display);font-size:clamp(32px,4vw,40px);font-weight:800;background:linear-gradient(90deg,#fff,var(--pink));-webkit-background-clip:text;background-clip:text;color:transparent}
+@media(max-width:860px){.tool-grid{grid-template-columns:1fr;max-width:560px;margin-left:auto;margin-right:auto}}
+
 /* reveal */
 .reveal{opacity:0;transform:translateY(26px);transition:.7s cubic-bezier(.16,1,.3,1)}
 .reveal.visible{opacity:1;transform:none}

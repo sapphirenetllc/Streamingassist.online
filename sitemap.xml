@@ -49,6 +49,12 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://streamingassist.online/tools.html</loc>
+    <lastmod>2026-10-02</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://streamingassist.online/privacy.html</loc>
     <lastmod>2026-10-01</lastmod>
     <changefreq>yearly</changefreq>
