@@ -157,7 +157,7 @@
     setInterval(()=>{ waitEl.textContent=(Math.random()*1.4+.4).toFixed(1)+' min'; },5000);
   }
 
-  // session call pop-up — once per session, shortly after site opens
+  // session call pop-up for each session, shortly after site opens
   const modal=$('#callModal');
   if(modal){
     const closeModal=()=>{ modal.classList.remove('open'); document.body.style.overflow=''; try{sessionStorage.setItem('sa_call_seen','1');}catch(e){} };
