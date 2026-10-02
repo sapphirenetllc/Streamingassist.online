@@ -162,11 +162,13 @@
     });
   });
 
-  // call intent logging (for future ads conversion hook)
+  // Google Ads conversion: phone-call lead (Purchase action AW-16799190588/gPTnCL2G94wdELycvco-).
+  // This site has no checkout/thank-you page — a tap on any call link IS the conversion,
+  // so fire the Ads event snippet on every tel: click.
   $$('a[href^="tel:"]').forEach(a=>{
     a.addEventListener('click', ()=>{
       try{
-        if(typeof gtag!=='undefined') gtag('event','conversion',{event_category:'call',event_label:a.href});
+        if(typeof gtag!=='undefined') gtag('event','conversion',{send_to:'AW-16799190588/gPTnCL2G94wdELycvco-'});
         if(typeof dataLayer!=='undefined') dataLayer.push({event:'call_click'});
       }catch(e){}
     });
